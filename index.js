@@ -21,6 +21,14 @@ fetch(dataUrl)
 		let sum_of_doughnuts_vitamines      = []
 
 		const silverCoins = 4
+		const newTransFatAmount = '3.2g'
+		const newCarbsAmount = '42g'
+		const mustAddVitamineDoughnut = 'Magic Fusion'
+		const newVitamine = ['Nitacina', '0%']
+		const newCarbsDailyValue = '53%'
+		const mustAddPropertyDoughnut = 'Relaxing Alchemy'
+		const propertyName =  'Alergen'
+		const alergenName = 'Gluten Free'
 
 		// Iterate data
 		for (let i = 0; i < data.items.item.length; i++) {
@@ -68,6 +76,7 @@ fetch(dataUrl)
   			const protein = parseInt(item.nutrition_facts.nutrition.proteine)
   			const fiber = parseInt(item.nutrition_facts.nutrition.carbohydrate.carbs_detail.type.fibre)
 			const saturated_fat = parseFloat(item.nutrition_facts.nutrition.fat.fat_type.saturated.replace("g", ""))
+			const cholesterol = parseInt(item.nutrition_facts.nutrition.cholesterol.amount.replace("mg", ""))
 
 			//Make Lists
 			list_of_doughnuts_calories.push([name,item.nutrition_facts.nutrition.calories])
@@ -82,6 +91,20 @@ fetch(dataUrl)
   			checkIfMostPropertyOf(name, protein, most_protein_doughnut);
   			checkIfMostPropertyOf(name, fiber, most_fiber_doughnut, false);
 
+			//Modify JSON Data
+			if (cholesterol > 12) 
+				data.items.item[i].nutrition_facts.nutrition.fat.fat_type.trans = newTransFatAmount
+
+			if (sugar > 50) 
+				data.items.item[i].nutrition_facts.nutrition.carbohydrate.carbs_detail.amount = newCarbsAmount
+
+			if (item.name === mustAddVitamineDoughnut) 
+				data.items.item[i].nutrition_facts.nutrition.vitamines.push({type:newVitamine[0], percent:newVitamine[1]})
+
+			data.items.item[i].nutrition_facts.nutrition.carbohydrate.daily_value = newCarbsDailyValue
+
+			if (item.name === mustAddPropertyDoughnut) 
+				data.items.item[i].propertyName = {type: alergenName}
 		}
 
 
@@ -139,6 +162,27 @@ fetch(dataUrl)
 			console.log(logPhrase)
 		}
 		console.log();
+
+		console.log("-----------Exercise 5-------------");
+		for (let i = 0; i < data.items.item.length; i++) {
+			const item = data.items.item[i]
+			const nutrition = item.nutrition_facts.nutrition
+			if (parseInt(nutrition.cholesterol.amount.replace("mg", "")) > 12) 
+				console.log(`${item.name} changed his trans fats to -> ${nutrition.fat.fat_type.trans}`) 
+			
+			if (parseInt(nutrition.carbohydrate.carbs_detail.type.sugars) > 50) 
+				console.log(`${item.name} changed his trans carbs details to -> ${nutrition.carbohydrate.carbs_detail.amount}`);
+			
+			if (item.name === mustAddVitamineDoughnut) 
+				console.log(`New vitamine named ${nutrition.vitamines.at(-1).type} added to ${item.name}`);
+			
+			console.log(`${item.name} changed his daily value carbs % to -> ${nutrition.carbohydrate.daily_value}`) 
+			
+			if (item.name === mustAddPropertyDoughnut) 
+				console.log(`New alergen named ${item.propertyName.type} added to ${item.name}`);
+				
+			console.log();
+}
 	});
 
 // Function to update the highest value if the current one is greater or lower if last param is set to false
