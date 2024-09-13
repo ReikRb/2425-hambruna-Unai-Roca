@@ -11,11 +11,16 @@ fetch(dataUrl)
 
 		let list_of_doughnuts_calories      	= []
 		let list_of_doughnuts_carbohydrates 	= []
-		let list_of_doughnuts_vitamines      = []
+		let list_of_doughnuts_vitamines      	= []
+		let list_of_doughnuts_possible_doughs 	= []
+		let list_of_doughnuts_possible_toppings = []
+		let list_of_purchasable_doughnuts_and_spare_coins = []
 
 		let sum_of_doughnuts_calories 		= 0
 		let sum_of_doughnuts_saturated_fats = 0
 		let sum_of_doughnuts_vitamines      = []
+
+		const silverCoins = 4
 
 		// Iterate data
 		for (let i = 0; i < data.items.item.length; i++) {
@@ -37,7 +42,26 @@ fetch(dataUrl)
 				}
 				sum_of_doughnuts_vitamines[index] += parseFloat(vitamin.percent.replace('%', ''))
 			}
+
+			//Look for possible doughs
+			let doughs = []
+			for (const dough of item.batters.batter) {
+				doughs.push(dough.type)
+			}
+			list_of_doughnuts_possible_doughs.push([name, doughs])
+
+			//Look for possible toppings
+			let toppings = []
+			for (const topping of item.topping) {
+				toppings.push(topping.type)
+			}
+			list_of_doughnuts_possible_toppings.push([name, toppings])
 			
+			//Check purchasable Amount
+			const possibleAmount =  Math.floor(silverCoins / item.ppu)
+			const spareCoins = (silverCoins % item.ppu).toFixed(2)
+			list_of_purchasable_doughnuts_and_spare_coins.push([item.name, possibleAmount, spareCoins]) 
+
 			// Parse Values
   			const sugar = parseInt(item.nutrition_facts.nutrition.carbohydrate.carbs_detail.type.sugars)
   			const iron = parseInt(ironPercent.replace('%', ''));
@@ -94,6 +118,27 @@ fetch(dataUrl)
 			const vitamine = sum_of_doughnuts_vitamines[i];
 			console.log("The average amount of " + list_of_doughnuts_vitamines[i] + " is: " + vitamine);
 		}
+
+		console.log("-----------Exercise 3-------------");
+		for (let index = 0; index < list_of_doughnuts_possible_doughs.length; index++) {
+			let logPhrase = `${list_of_doughnuts_possible_doughs[index][0]} has this possible doughs: ${list_of_doughnuts_possible_doughs[index][1]}`
+			console.log(logPhrase)
+		}
+		console.log();
+
+		for (let index = 0; index < list_of_doughnuts_possible_toppings.length; index++) {
+			let logPhrase = `${list_of_doughnuts_possible_toppings[index][0]} has this possible toppings: ${list_of_doughnuts_possible_toppings[index][1]}`
+			console.log(logPhrase)
+		}
+		console.log()
+
+		console.log("-----------Exercise 4-------------");
+		for (let index = 0; index < list_of_purchasable_doughnuts_and_spare_coins.length; index++) {
+			const logPhrase = `The Party could buy ${list_of_purchasable_doughnuts_and_spare_coins[index][1]} ${list_of_purchasable_doughnuts_and_spare_coins[index][0]} and still have ${list_of_purchasable_doughnuts_and_spare_coins[index][2] * 100} copper coins of pocket money.`
+			console.log();
+			console.log(logPhrase)
+		}
+		console.log();
 	});
 
 // Function to update the highest value if the current one is greater or lower if last param is set to false
